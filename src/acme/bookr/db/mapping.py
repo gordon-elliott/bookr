@@ -1,3 +1,5 @@
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
+
 from datetime import datetime
 from uuid import uuid4
 

@@ -1,12 +1,14 @@
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
+
 from datetime import datetime
 
 import pytest
 
-from acme.bookr.db.engine import engine
-from acme.bookr.db.session_scope import session_scope
 from acme.bookr.db.catalogue import create_catalogue, TITLES
+from acme.bookr.db.engine import engine
 from acme.bookr.db.mapping import metadata, Book, User, BookRequest
-
+from acme.bookr.db.session_scope import session_scope
+from acme.bookr.db.utils import truncate_operational_tables
 
 EMAIL_FIXTURE = "jb@example.com"
 BOOK_FIXTURE = "To Kill a Mockingbird"
@@ -14,12 +16,13 @@ BOOK_FIXTURE = "To Kill a Mockingbird"
 
 @pytest.fixture(scope='module')
 def setup():
+    metadata.drop_all(engine)
     metadata.create_all(engine)
     create_catalogue()
 
     yield
 
-    metadata.drop_all(engine)
+    truncate_operational_tables(engine)
 
 
 @pytest.fixture(scope='module')
@@ -37,6 +40,7 @@ def existing_user():
     with session_scope() as session:
         session.query(User).delete()
 
+
 def test_catalogue(setup):
     with session_scope() as session:
         books = session.query(Book).all()
@@ -46,7 +50,6 @@ def test_catalogue(setup):
 
 
 def test_user(setup, existing_user):
-
     with session_scope() as sesssion:
         users = sesssion.query(User).all()
 
@@ -60,7 +63,6 @@ def test_user(setup, existing_user):
 
 
 def test_book_request(setup, existing_user):
-
     with session_scope() as session:
         book = session.query(Book).filter_by(_title=BOOK_FIXTURE).one()
 

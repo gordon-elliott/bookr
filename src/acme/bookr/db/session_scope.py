@@ -1,5 +1,7 @@
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
 
 from contextlib import contextmanager
+
 from sqlalchemy.orm import sessionmaker
 
 Session = sessionmaker()

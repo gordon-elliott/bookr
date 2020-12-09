@@ -1,3 +1,5 @@
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
+
 from acme.bookr.db.mapping import Book
 from acme.bookr.db.session_scope import session_scope
 

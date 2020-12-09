@@ -1,7 +1,9 @@
-from flask import Flask, request as flask_request, jsonify
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
+
+from flask import Flask, request as flask_request, jsonify, abort
 
 from acme.bookr.db.book_request import delete_book_request, get_book_request, list_book_requests, create_book_request
-
+from acme.bookr.model.user import InvalidEmailError
 
 app = Flask(__name__)
 
@@ -11,21 +13,30 @@ def request_get_all():
     return jsonify([book_request for book_request in list_book_requests()])
 
 
-@app.route("/request/<uuid:id_>", methods=['GET'])
+@app.route("/request/<string:id_>", methods=['GET'])
 def request_get(id_: str):
     book_request = get_book_request(id_)
-    return jsonify(book_request if book_request else {})
+    if book_request:
+        return jsonify(book_request)
+    else:
+        abort(404)
 
 
 @app.route("/request", methods=['POST'])
 def request_post():
     email = flask_request.form["email"]
     title = flask_request.form["title"]
-    book_request_dict = create_book_request(email, title)
+    book_request_dict = {}
+    try:
+        book_request_dict = create_book_request(email, title)
+    except InvalidEmailError:
+        app.logger.error(f"Invalid email provided - {email}")
+        abort(400)
+
     return jsonify(book_request_dict)
 
 
-@app.route("/request/<uuid:id_>", methods=['DELETE'])
+@app.route("/request/<string:id_>", methods=['DELETE'])
 def request_delete(id_: str):
     delete_book_request(id_)
     return jsonify({})

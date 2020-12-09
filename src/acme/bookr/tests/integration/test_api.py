@@ -1,3 +1,5 @@
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
+
 import pytest
 import requests
 
@@ -58,6 +60,18 @@ def test_request_post():
     requests.delete(f"http://{HOST}:{PORT}/request/{deserialized['id']}")
 
 
+def test_request_post_bad_email():
+    response = requests.post(
+        f"http://{HOST}:{PORT}/request",
+        dict(
+            email="jb@example_com",
+            title="Of Mice and Men",
+        )
+    )
+
+    assert response.status_code == 400
+
+
 def test_request_get_all(sample_requests):
     response = requests.get(f"http://{HOST}:{PORT}/request")
 
@@ -99,6 +113,4 @@ def test_request_delete_missing(sample_requests):
     non_existant_id = "not an id"
     response = requests.delete(f"http://{HOST}:{PORT}/request/{non_existant_id}")
 
-    assert response.status_code == 404
-    with pytest.raises(requests.exceptions.HTTPError):
-        response.raise_for_status()
+    assert response.status_code == 200

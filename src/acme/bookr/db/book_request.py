@@ -1,8 +1,9 @@
-from typing import Optional, Dict, List
-from uuid import UUID
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
 
-from acme.bookr.db.session_scope import session_scope
+from typing import Optional, Dict, List
+
 from acme.bookr.db.mapping import Book, User, BookRequest
+from acme.bookr.db.session_scope import session_scope
 
 
 def create_book_request(requester_email: str, book_title: str) -> Dict[str, str]:
@@ -23,10 +24,10 @@ def create_book_request(requester_email: str, book_title: str) -> Dict[str, str]
         return book_request.as_dict()
 
 
-def get_book_request(request_id: UUID) -> Optional[Dict[str, str]]:
+def get_book_request(request_id: str) -> Optional[Dict[str, str]]:
     with session_scope() as session:
-        book_request = session.query(BookRequest).filter_by(_uuid=str(request_id)).one_or_none()
-        return book_request.as_dict()
+        book_request = session.query(BookRequest).filter_by(_uuid=request_id).one_or_none()
+        return book_request.as_dict() if book_request else None
 
 
 def list_book_requests() -> List[Dict[str, str]]:

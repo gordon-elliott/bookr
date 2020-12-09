@@ -13,5 +13,5 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 ENV FLASK_APP ./src/acme/bookr/api.py
-RUN ls -la $FLASK_APP
+
 CMD ["flask", "run", "--host=0.0.0.0"]

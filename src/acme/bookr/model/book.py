@@ -1,3 +1,4 @@
+#  __copyright__ = "Copyright (c) 2020 Gordon Elliott"
 
 class Book:
     _title: str
